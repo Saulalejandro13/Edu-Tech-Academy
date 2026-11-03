@@ -1,8 +1,0 @@
-Resultados de verificación local del complemento (NO del repositorio original)
-Fecha: 2026-11-02
-Comando: PYTHONPATH=src pytest -q --disable-warnings
-Sistema: Python 3.13.5
-Resultado: 24 passed
-Cobertura: 408 statements, 5 missed => 98.77%
-Umbral requerido de pytest-cov: 80% => aprobado localmente.
-Docker, GitHub Actions y despliegue remoto: NO ejecutados/verificados.
