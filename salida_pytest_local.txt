@@ -1,0 +1,19 @@
+........................                                                 [100%]
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.5-final-0 ________________
+
+Name                                     Stmts   Miss  Cover   Missing
+----------------------------------------------------------------------
+src/edutech/__init__.py                      0      0   100%
+src/edutech/api/__init__.py                  0      0   100%
+src/edutech/api/main.py                     73      0   100%
+src/edutech/application/__init__.py          0      0   100%
+src/edutech/application/services.py         96      2    98%   17, 39
+src/edutech/domain/__init__.py               0      0   100%
+src/edutech/domain/model.py                152      3    98%   151, 158, 180
+src/edutech/infrastructure/__init__.py       0      0   100%
+src/edutech/infrastructure/db.py            87      0   100%
+----------------------------------------------------------------------
+TOTAL                                      408      5    99%
+Required test coverage of 80% reached. Total coverage: 98.77%
+24 passed, 3 warnings in 1.57s
