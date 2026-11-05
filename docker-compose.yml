@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: edutech
+      POSTGRES_USER: edutech
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-local_dev_only}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U edutech"]
+      interval: 3s
+      retries: 15
+    volumes:
+      - edutech_data:/var/lib/postgresql/data
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql+psycopg://edutech:${POSTGRES_PASSWORD:-local_dev_only}@db:5432/edutech
+      ASISTENCIA_MINIMA: ${ASISTENCIA_MINIMA:-80}
+      PLAZO_PAGO_DIAS: ${PLAZO_PAGO_DIAS:-7}
+    depends_on:
+      db:
+        condition: service_healthy
+  tests:
+    build: .
+    command: sh -c "pip install --no-cache-dir -r requirements-dev.txt && pytest"
+    volumes:
+      - ./tests:/app/tests:ro
+      - ./requirements-dev.txt:/app/requirements-dev.txt:ro
+      - ./pyproject.toml:/app/pyproject.toml:ro
+    environment:
+      DATABASE_URL: postgresql+psycopg://edutech:${POSTGRES_PASSWORD:-local_dev_only}@db:5432/edutech
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  edutech_data:
