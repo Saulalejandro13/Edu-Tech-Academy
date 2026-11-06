@@ -1,0 +1,1 @@
+La arquitectura de Unidad 3 se encuentra **sintetizada**, no adjunta íntegramente, en `../architecture/ARQUITECTURA_U3_SINTESIS.md`. Para la entrega final, agregue el archivo DOCX de Unidad 3 del equipo, verificando que UML, ADRs y modelo de dominio coincidan con esta implementación v2.
