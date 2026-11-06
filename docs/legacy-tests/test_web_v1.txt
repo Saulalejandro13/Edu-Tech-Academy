@@ -1,0 +1,63 @@
+import pytest
+from fastapi.testclient import TestClient
+from edutech.api.main import create_app
+from edutech.domain.model import Politicas
+
+
+@pytest.fixture
+def client(tmp_path, monkeypatch):
+    monkeypatch.setenv('EDUTECH_STAFF_KEY', 'clave-test')
+    return TestClient(create_app(f'sqlite:///{tmp_path / "web.db"}', Politicas(asistencia_minima=80)))
+
+
+def headers():
+    return {'x-demo-key': 'clave-test'}
+
+
+def test_html_css_js_and_documentation(client):
+    page = client.get('/')
+    assert page.status_code == 200
+    assert 'EduTech Academy' in page.text
+    assert 'Explorar cursos' in page.text
+    assert client.get('/static/styles.css').status_code == 200
+    assert client.get('/static/app.js').status_code == 200
+    assert client.get('/docs').status_code == 200
+
+
+def test_staff_operations_restricted(client):
+    payload={'id':'P','nombre':'Prueba','precio':100,'instructor_id':'I'}
+    assert client.post('/cursos',json=payload).status_code == 403
+    assert client.post('/cursos',json=payload,headers={'x-demo-key':'incorrecta'}).status_code == 403
+    assert client.post('/cursos',json=payload,headers=headers()).status_code == 201
+    assert client.get('/inscripciones').status_code == 403
+    assert client.get('/bitacora').status_code == 403
+    assert client.get('/bitacora',headers=headers()).status_code == 200
+
+
+def test_student_catalog_enrollment_staff_grading_and_audit(client):
+    a=client.post('/demo/cursos-ejemplo',headers=headers())
+    assert a.status_code == 200 and a.json()['creados'] == 6
+    assert client.post('/demo/cursos-ejemplo',headers=headers()).json()['creados'] == 0
+    c=client.get('/cursos').json()
+    assert len(c)==6
+    enrollment=client.post('/inscripciones',json={'estudiante_id':'alumno-demo','curso_id':c[0]['id']})
+    assert enrollment.status_code == 201
+    ident=enrollment.json()['id']
+    assert len(client.get('/alumnos/alumno-demo/inscripciones').json())==1
+    assert client.get('/alumnos/otro/inscripciones').json()==[]
+    assert client.post(f'/inscripciones/{ident}/pago').status_code==200
+    assert client.post(f'/inscripciones/{ident}/asistencia',json={'presente':True}).status_code==403
+    assert client.post(f'/inscripciones/{ident}/asistencia',json={'presente':True},headers=headers()).status_code==200
+    grade=client.post(f'/inscripciones/{ident}/calificacion',json={'calificacion':75},headers=headers())
+    assert grade.status_code==200
+    corrected=client.post(f'/inscripciones/{ident}/corregir-calificacion',json={'calificacion':85,'responsable':'Control Escolar','motivo':'Captura incorrecta'},headers=headers())
+    assert corrected.status_code==200 and corrected.json()['calificacion']==85
+    assert client.post(f'/inscripciones/{ident}/corregir-calificacion',json={'calificacion':65,'responsable':'','motivo':'x'},headers=headers()).status_code==422
+    ins=client.get('/inscripciones',headers=headers()).json()
+    assert len(ins)==1
+    changed=client.post(f"/cursos/{c[0]['id']}/sustituir-instructor",json={'instructor_id':'I-NUEVO','responsable':'Administracion','motivo':'Cambio temporal'},headers=headers())
+    assert changed.status_code==200 and changed.json()['instructor_id']=='I-NUEVO'
+    audit=client.get('/bitacora',headers=headers()).json()
+    assert any(x['accion']=='CalificacionCorregida' and x['antes']==75 and x['despues']==85 for x in audit)
+    assert any(x['accion']=='InstructorSustituido' for x in audit)
+    assert all('fecha_utc' in x for x in audit)
