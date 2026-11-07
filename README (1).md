@@ -81,7 +81,6 @@ Para ejecutar solo las pruebas en contenedor:
 docker compose run --rm tests
 ```
 
-> ⚠️ CONFIRMAR: el nombre del servicio de pruebas (`tests`) y el puerto deben coincidir con tu `docker-compose.yml`.
 
 ## Ejecución local sin Docker
 
@@ -91,8 +90,6 @@ source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 uvicorn edutech.api.main:app --reload --app-dir src
 ```
-
-> ⚠️ CONFIRMAR: el módulo de arranque (`edutech.api.main:app`) y si requiere `--app-dir src` o instalar el paquete con `pip install -e .`.
 
 ## Pruebas y cobertura
 
@@ -121,9 +118,13 @@ Desplegado como Web Service en **Render**, con la base de datos y las variables 
 
 ## Roles y demostración
 
-Perfiles: Estudiante, Instructor, Control Escolar, Administración y Cliente empresarial (permisos según el BRD, sección 11).
+Perfiles: 
+Estudiante
+puede crear su popria cuenta un ejemplo 
+Saul@gmail.com
+Instructor
 
-> ⚠️ CONFIRMAR: agrega aquí los usuarios de demostración (solo cuentas de prueba, sin credenciales reales).
+Control Escolar, Administración y Cliente empresarial (permisos según el BRD, sección 11).
 
 Guion de demostración:
 
