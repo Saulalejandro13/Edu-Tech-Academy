@@ -402,13 +402,6 @@ return [
     for i in inscs
 ]
 
-    @app.get('/mis-inscripciones')
-    def mis_inscripciones(user=Depends(require_user)):
-        with sf() as db:
-            # Código que consulta las inscripciones
-            ...
-            return []
-
     @app.get('/inscripciones/{eid}')
     def inscripcion(eid: str, user=Depends(require_user)):
         return asdict(
