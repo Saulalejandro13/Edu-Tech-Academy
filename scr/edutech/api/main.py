@@ -402,11 +402,20 @@ return [
     for i in inscs
 ]
 
+    @app.get('/mis-inscripciones')
+    def mis_inscripciones(user=Depends(require_user)):
+        with sf() as db:
+            # Código que consulta las inscripciones
+            ...
+            return []
 
     @app.get('/inscripciones/{eid}')
-    def inscripcion(eid:str,user=Depends(require_user)):
-        return asdict(check_enrollment(eid,user,'administracion','control_escolar'))
-
+    def inscripcion(eid: str, user=Depends(require_user)):
+        return asdict(
+            check_enrollment(
+                eid, user, 'administracion', 'control_escolar'
+            )
+        )
     @app.post('/inscripciones/{eid}/pago')
     def pagar(eid:str,user=Depends(access('estudiante','administracion'))):
         insc=check_enrollment(eid,user,'administracion')
