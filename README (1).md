@@ -146,3 +146,16 @@ Los requerimientos del BRD (BR-01 a BR-09, EX-01 a EX-04, RNF-01 a RNF-05), las 
 - Pagos y reembolsos simulados; sin integración con facturación.
 - Algunos aggregates del diseño (RegistroAcademico, Certificado, SolicitudCambioGrupo, CancelacionCurso) están implementados de forma simplificada.
 - La cobertura de `application/services.py` (69 %) es el área de refuerzo.
+
+- ## API pública
+
+Aplicación:
+https://edu-tech-academy.onrender.com/
+
+Swagger:
+https://edu-tech-academy.onrender.com/docs
+
+OpenAPI:
+https://edu-tech-academy.onrender.com/openapi.json
+
+
