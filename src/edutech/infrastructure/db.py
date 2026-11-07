@@ -8,7 +8,8 @@ from edutech.domain.model import Curso, Inscripcion, Cupo, CourseState, Enrollme
 
 class Base(DeclarativeBase):
     pass
-
+class Base(DeclarativeBase):
+    pass
 
 class CourseRow(Base):
     __tablename__ = 'cursos'
