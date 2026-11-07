@@ -377,30 +377,35 @@ def create_app(database_url=None, politicas=None):
             else:inscs=service.inscripciones()
             assignments={a.inscripcion_id:a for a in db.scalars(select(AssignmentRow)).all()}
            
-estudiante_ids = {i.estudiante_id for i in inscs}
 
-usuarios = {
-    u.id: u
-    for u in db.scalars(
-        select(UserRow).where(UserRow.id.in_(estudiante_ids))
-    ).all()
-} if estudiante_ids else {}
+            estudiante_ids = {i.estudiante_id for i in inscs}
 
-return [
-    {
-        **asdict(i),
-        'grupo_id': (
-            assignments[i.id].grupo_id
-            if i.id in assignments else None
-        ),
-        'estudiante_nombre': (
-            usuarios[i.estudiante_id].nombre
-            if i.estudiante_id in usuarios
-            else i.estudiante_id
-        )
-    }
-    for i in inscs
-]
+            usuarios = {
+                u.id: u
+                for u in db.scalars(
+                    select(UserRow).where(
+                        UserRow.id.in_(estudiante_ids)
+                    )
+                ).all()
+            } if estudiante_ids else {}
+
+            return [
+                {
+                    **asdict(i),
+                    'grupo_id': (
+                        assignments[i.id].grupo_id
+                        if i.id in assignments else None
+                    ),
+                    'estudiante_nombre': (
+                        usuarios[i.estudiante_id].nombre
+                        if i.estudiante_id in usuarios
+                        else i.estudiante_id
+                    )
+                }
+                for i in inscs
+            ]
+
+
 
     @app.get('/inscripciones/{eid}')
     def inscripcion(eid: str, user=Depends(require_user)):
